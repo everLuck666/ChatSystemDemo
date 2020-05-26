@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script sc="jquery.js"></script>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+
+    <script>
+
+        function openSocket(){
+
+            var url = "ws://49.234.125.157:8088/iserver/"+$("#userId").val();
+
+            var ws = new WebSocket(url);
+
+            ws.onopen = function(){
+                ws.send("发送数据");
+
+            };
+
+            ws.onmessage = function(evt){
+                var receiver_message = evt.data;
+
+                $("#message").append("<p>"+receiver_message+"</P>");
+
+                setMessageInnerHTML(evt.data);
+            };
+            ws.onclose = function(){
+                alert("连接中断")
+            };
+
+        }
+
+        function sendMessage() {
+            $("#message").append("<P>"+$("#userId").val()+":"+$("#contentText").val()+"</P>");
+
+            var url = "ws://49.234.125.157:8088/iserver/"+$("#userId").val();
+
+            var ws = new WebSocket(url);
+
+            ws.onopen = function(){
+                ws.send($("#userId2").val()+"#"+$("#userId").val()+":"+$("#contentText").val());
+
+                $("#contentText").val("");
+            };
+
+            ws.onmessage = function(evt){
+                var receiver_message = evt.data;
+
+                $("#message").append(receiver_message);
+
+                setMessageInnerHTML(evt.data);
+            };
+            ws.onclose = function(){
+                alert("连接中断")
+            };
+
+
+        }
+
+
+    </script>
+</head>
+<body onload="openSocket()">
+
+<p style="color:red" th:text="${ids}" th:if="${not #strings.isEmpty(ids)}"></p>
+
+<p>userid</p><div><input th:value="${id1}" id="userId" name="userId" type="text" class="userId" disabled="true"></div>
+<p>userid2</p><div><input th:value="${id2}" id="userId2" name="userId2" type="text" class="userId2" disabled="true"></div>
+<p>message</p><div><input id="contentText" name="contentText" type="text" class="contentText"></div>
+<div> <button onclick="sendMessage()">发送信息</button></div>
+<p id="message"></p>
+
+</body>
+
+</html>

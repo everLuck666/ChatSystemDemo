@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script sc="jquery.js"></script>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+
+    <script>
+
+        function openSocket(){
+
+            var url = "ws://49.234.125.157:8088/iserver/"+$("#userId").val();
+
+            var ws = new WebSocket(url);
+
+            ws.onopen = function(){
+                ws.send("@"+$("#userId").val()+"登入");
+
+            };
+
+            ws.onmessage = function(evt){
+                var receiver_message = evt.data;
+
+                $("#message").append("<p>"+receiver_message+"</P>");
+
+                setMessageInnerHTML(evt.data);
+            };
+            ws.onclose = function(){
+                alert("连接中断")
+            };
+
+        }
+
+        function sendMessage() {
+
+
+            var url = "ws://49.234.125.157:8088/iserver/"+$("#userId").val();
+
+            var ws = new WebSocket(url);
+
+            ws.onopen = function(){
+                ws.send($("#userId").val()+":"+$("#contentText").val());
+                $("#contentText").val("");
+            };
+
+            ws.onmessage = function(evt){
+                var receiver_message = evt.data;
+
+                $("#message").append("<p>"+receiver_message+"<p>");
+
+                setMessageInnerHTML(evt.data);
+            };
+            ws.onclose = function(){
+                alert("连接中断")
+            };
+
+
+        }
+
+
+    </script>
+</head>
+<body onload="openSocket()">
+<p style="color:red" th:text="${ids}" th:if="${not #strings.isEmpty(ids)}"></p>
+<h1>欢迎进入多人聊天室</h1>
+
+<div th:each="user:${users}">
+    <h1 th:text= ${user}></h1>
+    <a th:href="@{/chat(id1=${ids},id2=${user})}">聊天</a>
+</div>
+<div>
+    <p>userid</p><div><input th:value="${ids}" id="userId" name="userId" type="text" class="userId" disabled="true"></div>
+    <p>message</p><div><input id="contentText" name="contentText" type="text" class="contentText"></div>
+    <div> <button onclick="sendMessage()">发送信息</button></div>
+    <p id="message"></p>
+</div>
+
+
+</body>
+
+</html>
