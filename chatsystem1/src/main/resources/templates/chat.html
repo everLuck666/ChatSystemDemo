@@ -11,7 +11,7 @@
 
         function openSocket(){
 
-            var url = "ws://49.234.125.157:8088/iserver/"+$("#userId").val();
+            var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
 
             var ws = new WebSocket(url);
 
@@ -36,7 +36,7 @@
         function sendMessage() {
             $("#message").append("<P>"+$("#userId").val()+":"+$("#contentText").val()+"</P>");
 
-            var url = "ws://49.234.125.157:8088/iserver/"+$("#userId").val();
+            var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
 
             var ws = new WebSocket(url);
 

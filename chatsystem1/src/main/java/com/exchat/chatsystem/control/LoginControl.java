@@ -36,7 +36,7 @@ public class LoginControl {
             System.out.println("读出了密码"+password2+"lalal");
 
             if(Integer.parseInt(password)==password2){
-                return "show";
+                return "index";
             }else {
                 map.put("msg", "登陆错误");
                 System.out.println("登陆错误");

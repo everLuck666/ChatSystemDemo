@@ -11,4 +11,12 @@ public class IndexControl {
     public String index(){
         return "show";
     }
+    @GetMapping("/corporation")
+    public String st(){
+        return "corporation";
+    }
+    @GetMapping("/chatShow")
+    public String chatShow(){
+        return "chatshow";
+    }
 }

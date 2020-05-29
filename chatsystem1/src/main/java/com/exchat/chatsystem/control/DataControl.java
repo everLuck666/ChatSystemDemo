@@ -1,12 +1,10 @@
 package com.exchat.chatsystem.control;
 
+import com.exchat.chatsystem.server.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,19 +15,22 @@ import static jdk.nashorn.internal.objects.NativeDebug.map;
 
 
 @Controller
-@RequestMapping
 public class DataControl {
 //    @Autowired
 //    JdbcTemplate jdbcTemplate;
-
-    @RequestMapping("/successde")
-    public String returnString(Map map){
+@Autowired
+private UserService userService;
+    @RequestMapping("/chatSuccess")
+    public String returnString(@RequestParam("username") String username,
+            Map map){
        //List list = jdbcTemplate.queryForList("select * from login");
       // map("tian", "tian");
-        map.put("tian", Arrays.asList("tian"));
+        List list = this.userService.allUser();
+        map.put("users",list);
+        map.put("ids", username);
         //System.out.println(list.get(0));
 
-        return "show";
+        return "chatshow";
 
     }
 
