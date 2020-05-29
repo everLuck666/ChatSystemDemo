@@ -28,7 +28,7 @@
     }
 </style>
 <body>
-<p style="color:red" th:text="${msg}" th:if="${not #strings.isEmpty(ids)}"></p>
+<p style="color:red" th:text="${msg}" th:if="${not #strings.isEmpty(ids) or not #strings.isEmpty(msg)}"></p>
 <div class="demo"></div>
 <div id = "div1">
     <form th:action="@{/user/login}" method="post">

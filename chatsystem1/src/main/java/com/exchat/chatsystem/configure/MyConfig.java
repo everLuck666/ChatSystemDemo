@@ -2,6 +2,7 @@ package com.exchat.chatsystem.configure;
 
 
 
+import com.exchat.chatsystem.component.LoginHandlerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -18,4 +19,11 @@ public class  MyConfig extends WebMvcConfigurerAdapter {
 
     }
 
-}
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            // super.addInterceptors(registry);
+            registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
+                    .excludePathPatterns("/login","/","/user/login","/user/save");
+        }
+    }
+

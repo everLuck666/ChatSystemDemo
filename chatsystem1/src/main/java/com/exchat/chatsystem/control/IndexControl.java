@@ -23,7 +23,7 @@ public class IndexControl {
     }
     @GetMapping("/corporation")
     public String st(){
-        return "corporation";
+        return "league";
     }
     @GetMapping("/chatShow")
     public String chatShow(){
