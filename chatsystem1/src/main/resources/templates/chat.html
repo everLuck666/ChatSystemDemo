@@ -8,15 +8,16 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
 
     <script>
+         setTimeout(sendMessage,1000);
 
         function openSocket(){
 
-            var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
+            var url = "ws://localhost:9090/iserver/"+$("#userId").val();
 
             var ws = new WebSocket(url);
 
             ws.onopen = function(){
-                ws.send("发送数据");
+                ws.send(("#userId").val());
 
             };
 
@@ -34,9 +35,12 @@
         }
 
         function sendMessage() {
-            $("#message").append("<P>"+$("#userId").val()+":"+$("#contentText").val()+"</P>");
 
-            var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
+                $("#message").append("<P>"+$("#userId").val()+":"+$("#contentText").val()+"</P>");
+
+
+
+            var url = "ws://localhost:9090/iserver/"+$("#userId").val();
 
             var ws = new WebSocket(url);
 
@@ -67,12 +71,16 @@
 
 <p style="color:red" th:text="${ids}" th:if="${not #strings.isEmpty(ids)}"></p>
 
+<div th:each="user:${list}">
+    <h1 th:text= ${user}></h1>
+</div>
+
 <p>userid</p><div><input th:value="${id1}" id="userId" name="userId" type="text" class="userId" disabled="true"></div>
 <p>userid2</p><div><input th:value="${id2}" id="userId2" name="userId2" type="text" class="userId2" disabled="true"></div>
 <p>message</p><div><input id="contentText" name="contentText" type="text" class="contentText"></div>
 <div> <button onclick="sendMessage()">发送信息</button></div>
 <p id="message"></p>
-
+<a th:href="@{/peoples(user=${id1})}">返回多人聊天室</a>
 </body>
 
 </html>

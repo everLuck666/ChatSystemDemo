@@ -1,8 +1,21 @@
 package com.exchat.chatsystem.server;
 
+import com.exchat.chatsystem.dao.UserDao;
+import com.exchat.chatsystem.dao.UserDaoImpl;
+import com.exchat.chatsystem.entity.AloneMessage;
+import com.exchat.chatsystem.utils.SpringUtil;
+import com.google.inject.Inject;
+import jdk.nashorn.internal.ir.annotations.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -18,19 +31,45 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/iserver/{userId}")
 @Component
 public class WebSocketServer {
+
+    //此处是解决无法注入的关键
+    private static ApplicationContext applicationContext;
+    //你要注入的service或者dao
+   UserService userService;
+    public static void setApplicationContext(ApplicationContext applicationContext) {
+        WebSocketServer.applicationContext = applicationContext;
+    }
+
+
     private Session session;
+
+
+
+
+
+    ;
 
     private String name;
 
     private static ConcurrentHashMap <String, WebSocketServer> map = new ConcurrentHashMap();
+    private static ConcurrentHashMap  aloneMap = new ConcurrentHashMap();
+    private static List aloneList = new ArrayList();
     private static List<Session> list = new ArrayList();
+
+
 
     @OnOpen
     public void onOpen(Session session, @PathParam(value = "userId") String name) {
         this.session = session;
         System.out.println(session);
         this.name = name;
-        map.put(name,this);
+
+            map.put(name,this);
+
+
+
+
+
 //        if(!list.contains(session)){
 //
 //            list.add(session);
@@ -56,16 +95,63 @@ public class WebSocketServer {
     public void OnMessage(String message) {
 
         System.out.println("我是来自客户端"+message);
+        if(message.contains("::")){
+            System.out.println("———————————— 来自单人聊天——"+message);
+            String[] usernames = message.split("&");
+            String username = usernames[1];
+            if(-1==aloneList.indexOf(username)){
+                aloneList.add(username);
+                System.out.println("这个用户目前在单独聊天"+username);
+            }
+
+        }
         if(message.contains("#")){
             try {
                 String[] message2= message.split("#");
+                //message2[0]是要发送给的用户，message[1]是要发送的信息。
                 System.out.println(message2[0]+message2[1]);
                 sendMessageUser(message2[0],message2[1]);
+
+                userService = applicationContext.getBean(UserServiceImpl.class);
+                AloneMessage aloneMessage = new AloneMessage();
+                if(message2[1].contains(":")){
+                    String[] user = message2[1].split(":");
+                    if(user.length==2){
+                        aloneMessage.setName(user[0]);
+                        aloneMessage.setMessage(user[1]);
+                        aloneMessage.setName2(message2[0]);
+                    }
+
+                    userService.insertAloneMessage(aloneMessage);//把单对单的数据存到数据库
+                }
+
+
+
+
+                String[] userName =  message2[1].split(":");//记录在单人聊天的人，不让多人防止多人聊天的人单发送
+                if(-1==aloneList.indexOf(userName[0])){
+                    aloneList.add(userName[0]);
+                    System.out.println("这个用户目前在单独聊天"+userName[0]);
+                }
+
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }else{//群发
+
                groupSending(message);
+            userService = applicationContext.getBean(UserServiceImpl.class);
+            System.out.println("群发的message"+message);
+            if(message.contains(":")){
+                userService.insertPeopleChat(message);
+                String[] userName =  message.split(":");
+                if(aloneList.indexOf(userName[0]) != -1){
+                    aloneList.remove(userName[0]);
+                }
+            }
+
 
         }
 
@@ -86,8 +172,13 @@ public class WebSocketServer {
 //             }
 //         }
         for(String key:map.keySet()){
+            System.out.println("我是目前的用户"+key);
             try {
-                map.get(key).sendMessage(message);
+                if(-1==aloneList.indexOf(key)){
+                    System.out.println("这个用户没在单独聊天"+key);
+                    map.get(key).sendMessage(message);
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -122,8 +213,21 @@ public class WebSocketServer {
 
     public void sendMessageUser(String name,String message) throws IOException {
         if(this.session.isOpen()){
+            if(map.get(name) == null){
+                AloneMessage aloneMessage = new AloneMessage();
+                String[] user = message.split(":");
+                if(user.length==2){
+                    aloneMessage.setName2(name);
+                    aloneMessage.setMessage(user[1]);
+                    aloneMessage.setName(user[0]);
+                    userService = applicationContext.getBean(UserServiceImpl.class);
+                    userService.insertAloneMessage(aloneMessage);
+                }
+            }else {
+                map.get(name).sendMessage(message);
+            }
 
-            map.get(name).sendMessage(message);
+
         }
 
     }

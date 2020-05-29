@@ -5,20 +5,26 @@
 
 	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
 	<script>
-
+		var i = 1;
+		setInterval(openSocket, 50000);
 		function openSocket(){
 
-			var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
+			var url = "ws://localhost:9090/iserver/"+$("#userId").val();
 
 			var ws = new WebSocket(url);
 
 			ws.onopen = function(){
-				ws.send("@"+$("#userId").val()+"登入");
+				if(i == 1){
+					ws.send("@"+$("#userId").val()+"登入");
+				}
+				i++;
+
 
 			};
 
 			ws.onmessage = function(evt){
 				var receiver_message = evt.data;
+
 
 				$("#message").append("<p>"+receiver_message+"</P>");
 
@@ -33,7 +39,7 @@
 		function sendMessage() {
 
 
-			var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
+			var url = "ws://localhost:9090/iserver/"+$("#userId").val();
 
 			var ws = new WebSocket(url);
 
@@ -88,7 +94,7 @@
 </style>
 <!--吸顶效果样式 end-->
 </head>
-<body>
+<body onload="openSocket()">
 	
 <!-- navigation -->
 
@@ -151,15 +157,15 @@
 																		<h1 th:text= ${user}></h1>
 																		<a th:href="@{/chat(id1=${ids},id2=${user})}">聊天</a>
 																	</div>
-																	<span class="label label-info arrowed arrowed-in-right">admin</span>
+																</div>
+
+																<div class="name">
+																	<div th:each="user:${list}">
+																		<h1 th:text= ${user}></h1>
+																	</div>
 																</div>
 																<div class="text"><p id="message"></p></div>
 
-																<div class="tools">
-																	<a href="#" class="btn btn-minier btn-info">
-																		<i class="icon-only icon-share-alt"></i>
-																	</a>
-																</div>
 															</div>
 														</div>
 
@@ -167,13 +173,10 @@
 													</div>
 
 													<form>
-														<p>message</p><div><input id="contentText" name="contentText" type="text" class="contentText"></div>
-
-																<input placeholder="Type your message here ..." type="text" class="form-control" name="message" />
-																<span class="input-group-btn">
+														<p>message</p>
+													   <input id="contentText" name="contentText" type="text" class="contentText">
 
 																	<button onclick="sendMessage()" class="btn btn-sm btn-info no-radius" type="button">
-																		<i class="icon-share-alt"></i>
 																		发送
 																	</button>
 																</span>

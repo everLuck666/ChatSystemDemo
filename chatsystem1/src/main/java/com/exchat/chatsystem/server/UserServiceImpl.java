@@ -1,6 +1,7 @@
 package com.exchat.chatsystem.server;
 
 import com.exchat.chatsystem.dao.UserDao;
+import com.exchat.chatsystem.entity.AloneMessage;
 import com.exchat.chatsystem.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,31 @@ public class UserServiceImpl implements UserService{
     @Override
     public List allUser() {
         return userDao.allUser();
+    }
+
+    @Override
+    public String searchUser(String name) {
+
+        return userDao.searchUser(name);
+    }
+
+    @Override
+    public int insertPeopleChat(String message) {
+        return userDao.insertPeopleChat(message);
+    }
+
+    @Override
+    public List readAllPeopleChat() {
+        return userDao.readAllPeopleChat();
+    }
+
+    @Override
+    public int insertAloneMessage(AloneMessage aloneMessage) {
+        return userDao.insertAloneMessage(aloneMessage);
+    }
+
+    @Override
+    public List aloneMessage(String userName, String userName2) {
+        return userDao.aloneMessage(userName,userName2);
     }
 }

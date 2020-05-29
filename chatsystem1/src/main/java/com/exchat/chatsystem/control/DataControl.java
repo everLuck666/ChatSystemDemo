@@ -28,6 +28,9 @@ private UserService userService;
         List list = this.userService.allUser();
         map.put("users",list);
         map.put("ids", username);
+        List listData = this.userService.readAllPeopleChat();
+
+        map.put("list",listData);
         //System.out.println(list.get(0));
 
         return "chatshow";

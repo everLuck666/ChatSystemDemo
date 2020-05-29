@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PC聊天</title>
+    <link rel="stylesheet" href="../css/session-eg.css">
+    <script sc="jquery.js"></script>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+
+    <script>
+        setTimeout(sendMessage,1000);
+
+        function openSocket(){
+
+            var url = "ws://localhost:9090/iserver/"+$("#userId").val();
+
+            var ws = new WebSocket(url);
+
+            ws.onopen = function(){
+                ws.send(("#userId").val());
+
+            };
+
+            ws.onmessage = function(evt){
+                var receiver_message = evt.data;
+
+                $("#message").append("<p>"+receiver_message+"</P>");
+
+                setMessageInnerHTML(evt.data);
+            };
+            ws.onclose = function(){
+                alert("连接中断")
+            };
+
+        }
+
+        function sendMessage() {
+
+            $(".message").append("<P>"+$("#userId").val()+":"+$(".contentText").val()+"</P>");
+
+
+
+            var url = "ws://localhost:9090/iserver/"+$("#userId").val();
+
+            var ws = new WebSocket(url);
+
+            ws.onopen = function(){
+                ws.send($("#userId2").val()+"#"+$("#userId").val()+":"+$(".contentText").val());
+
+                $(".contentText").val("");
+            };
+
+            ws.onmessage = function(evt){
+                var receiver_message = evt.data;
+
+                $("#message").append(receiver_message);
+
+                setMessageInnerHTML(evt.data);
+            };
+            ws.onclose = function(){
+                alert("连接中断")
+            };
+
+
+        }
+
+
+    </script>
+</head>
+<body onload="openSocket()">
+<p style="color:red" th:text="${ids}" th:if="${not #strings.isEmpty(ids)}"></p>
+<p>userid</p><div><input th:value="${id1}" id="userId" name="userId" type="text" class="userId" disabled="true"></div>
+
+<p>userid2</p><div><input th:value="${id2}" id="userId2" name="userId2" type="text" class="userId2" disabled="true"></div>
+<div class="main">
+    <div class="box">
+        <div class="box-right">
+            <div class="recvfrom">
+                <div class="nav-top">
+                </div>
+                <div >
+                    <h1 th:each="user:${list}" th:text= ${user}></h1>
+                    <p id="message" class="message"></p>
+                </div>
+
+            </div>
+
+            <div class="sendto">
+
+
+                <div class="but-nav">
+                    <ul>
+                        <li class="font"></li>
+                        <li class="face"></li>
+                        <li class="cut"></li>
+                        <li class="page"></li>
+                        <li class="old"></li>
+                    </ul>
+                </div>
+                <div class="but-text">
+                    <p>message</p><div><input name="contentText" type="text" class="contentText"></div>
+                    <div> <button onclick="sendMessage()" class="button">发送信息</button></div>
+                </div>
+                <a th:href="@{/peoples(user=${id1})}">返回多人聊天室</a>
+            </div>
+        </div>
+ 
+    </div>
+ 
+ 
+</div>
+ 
+</body>
+</html>
