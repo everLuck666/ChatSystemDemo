@@ -10,7 +10,7 @@
 		setInterval(openSocket, 50000);
 		function openSocket(){
 
-			var url = "ws://localhost:9090/iserver/"+$("#userId").val();
+			var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
 
 			var ws = new WebSocket(url);
 
@@ -40,7 +40,7 @@
 		function sendMessage() {
 
 
-			var url = "ws://localhost:9090/iserver/"+$("#userId").val();
+			var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
 
 			var ws = new WebSocket(url);
 

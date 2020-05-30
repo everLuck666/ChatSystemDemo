@@ -45,4 +45,8 @@ public class IndexControl {
     public String test(){
         return "alone";
     }
+    @RequestMapping("/register")
+    public String register(){
+        return "register";
+    }
 }

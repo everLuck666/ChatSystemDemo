@@ -23,7 +23,7 @@ public class  MyConfig extends WebMvcConfigurerAdapter {
         public void addInterceptors(InterceptorRegistry registry) {
             // super.addInterceptors(registry);
             registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
-                    .excludePathPatterns("/login","/","/user/login","/user/save");
+                    .excludePathPatterns("/login","/","/user/login","/user/save","/register");
         }
     }
 

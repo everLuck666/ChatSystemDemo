@@ -24,7 +24,7 @@ public class UserController {
         user.setPassword(password);
        if(!userService.searchUser(username).equals("用户存在")){
            int result = this.userService.insert(user);
-           map2.put("msg","shishihsi");
+           map2.put("msg","注册成功");
            return "login";
        }else{
            map2.put("msg","用户已经存在");

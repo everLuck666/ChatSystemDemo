@@ -110,7 +110,17 @@ public class WebSocketServer {
                 String[] message2= message.split("#");
                 //message2[0]是要发送给的用户，message[1]是要发送的信息。
                 System.out.println(message2[0]+message2[1]);
-                sendMessageUser(message2[0],message2[1]);
+
+                        if(-1==aloneList.indexOf(message2[0])){//目前在单独聊天页里面没有这个用户，那么这个用户在广播区
+                            sendMessageUser(message2[0],message2[1]+"---来自单独聊天");
+
+                        }else{
+                            sendMessageUser(message2[0],message2[1]);
+                        }
+
+
+
+
 
                 userService = applicationContext.getBean(UserServiceImpl.class);
                 AloneMessage aloneMessage = new AloneMessage();
