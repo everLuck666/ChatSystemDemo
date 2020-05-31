@@ -49,4 +49,8 @@ public class IndexControl {
     public String register(){
         return "register";
     }
+    @RequestMapping("/allchat")
+    public String allChat(){
+        return "allchat";
+    }
 }

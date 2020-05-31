@@ -111,16 +111,12 @@ public class WebSocketServer {
                 //message2[0]是要发送给的用户，message[1]是要发送的信息。
                 System.out.println(message2[0]+message2[1]);
 
-                        if(-1==aloneList.indexOf(message2[0])){//目前在单独聊天页里面没有这个用户，那么这个用户在广播区
+                        if(-1==aloneList.indexOf(message2[0])){//目前在单独聊天页里面没有这个用户，那么这个用户在广播区2、还有种可能性是没有登陆
                             sendMessageUser(message2[0],message2[1]+"---来自单独聊天");
 
                         }else{
                             sendMessageUser(message2[0],message2[1]);
                         }
-
-
-
-
 
                 userService = applicationContext.getBean(UserServiceImpl.class);
                 AloneMessage aloneMessage = new AloneMessage();
@@ -132,7 +128,7 @@ public class WebSocketServer {
                         aloneMessage.setName2(message2[0]);
                     }
 
-                    userService.insertAloneMessage(aloneMessage);//把单对单的数据存到数据库
+                    //userService.insertAloneMessage(aloneMessage);//把单对单的数据存到数据库
                 }
 
 
@@ -150,17 +146,23 @@ public class WebSocketServer {
                 e.printStackTrace();
             }
         }else{//群发
+            if(!message.equals("我还活着")){
+                groupSending(message);
+                userService = applicationContext.getBean(UserServiceImpl.class);
+                System.out.println("群发的message"+message);
+                if(message.contains(":")){
 
-               groupSending(message);
-            userService = applicationContext.getBean(UserServiceImpl.class);
-            System.out.println("群发的message"+message);
-            if(message.contains(":")){
-                userService.insertPeopleChat(message);
-                String[] userName =  message.split(":");
-                if(aloneList.indexOf(userName[0]) != -1){
-                    aloneList.remove(userName[0]);
+                    String[] userName =  message.split(":");
+                    if(userName.length==2){
+                        userService.insertPeopleChat(message);//防止发送空数据
+                    }
+                    if(aloneList.indexOf(userName[0]) != -1){
+                        aloneList.remove(userName[0]);
+                    }
                 }
             }
+
+
 
 
         }
@@ -226,12 +228,14 @@ public class WebSocketServer {
             if(map.get(name) == null){
                 AloneMessage aloneMessage = new AloneMessage();
                 String[] user = message.split(":");
+                //在给单人发消息的时候，由于用户没有登陆，所以这个时候的消息，带个---来自单人登陆
+                String[] message3 = user[1].split("---");
                 if(user.length==2){
                     aloneMessage.setName2(name);
-                    aloneMessage.setMessage(user[1]);
+                    aloneMessage.setMessage(message3[0]);
                     aloneMessage.setName(user[0]);
                     userService = applicationContext.getBean(UserServiceImpl.class);
-                    userService.insertAloneMessage(aloneMessage);
+                    userService.insertAloneMessage(aloneMessage);//把数据存入到数据库
                 }
             }else {
                 map.get(name).sendMessage(message);
