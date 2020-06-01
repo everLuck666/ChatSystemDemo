@@ -18,7 +18,7 @@
 				if(i == 1){
 					ws.send("@"+$("#userId").val()+"登入");
 				}
-				ws.send("我还活着");
+				ws.send($("#userId").val()+"我在多人聊天");
 				i++;
 
 
@@ -39,6 +39,7 @@
 		}
 
 		function sendMessage() {
+			//$("#message").append("<P>"+$("#userId").val()+":"+$(".contentText").val()+"</P>");
 
 
 			var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();

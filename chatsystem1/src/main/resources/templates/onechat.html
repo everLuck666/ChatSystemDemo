@@ -6,31 +6,27 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PC聊天</title>
-    <link rel="stylesheet" href="../css/session-eg.css">
+    <link rel="stylesheet" href="../css/session-eg1.css">
     <script sc="jquery.js"></script>
 
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
 
     <script>
-        setTimeout(openSocket,1000);
-
+        setInterval(openSocket,10000);
         function openSocket(){
 
             var url = "ws://49.234.125.157:9090/iserver/"+$("#userId").val();
 
             var ws = new WebSocket(url);
 
-            ws.onopen = function(){
-                ws.send(("#userId").val());
+            ws.onopen = function(){//js有错误他不自己显示
+                ws.send($("#userId2").val()+"&"+$("#userId").val());
 
             };
 
             ws.onmessage = function(evt){
-                var receiver_message = evt.data;
+                addMessage(evt.data);
 
-                $("#message").append("<p>"+receiver_message+"</P>");
-
-                setMessageInnerHTML(evt.data);
             };
             ws.onclose = function(){
                 alert("连接中断")
@@ -40,7 +36,8 @@
 
         function sendMessage() {
 
-            $(".message").append("<P>"+$("#userId").val()+":"+$(".contentText").val()+"</P>");
+             //$(".message").append("<P>"+$("#userId").val()+":"+$(".contentText").val()+"</P>");
+             addMessage($("#userId").val()+":"+$(".contentText").val());
 
 
 
@@ -57,9 +54,8 @@
             ws.onmessage = function(evt){
                 var receiver_message = evt.data;
 
-                $("#message").append(receiver_message);
-
-                setMessageInnerHTML(evt.data);
+                // $("#message").append(receiver_message);
+                addMessage(evt.data);
             };
             ws.onclose = function(){
                 alert("连接中断")
@@ -67,6 +63,17 @@
 
 
         }
+
+        function addMessage(message) {
+            var li = document.createElement('li');
+            var textnode=document.createTextNode(message);
+            li.appendChild(textnode);
+
+            document.getElementById("myList").appendChild(li);
+
+        }
+
+
 
 
     </script>
@@ -76,36 +83,33 @@
 <p>userid</p><div><input th:value="${id1}" id="userId" name="userId" type="text" class="userId" disabled="true"></div>
 
 <p>userid2</p><div><input th:value="${id2}" id="userId2" name="userId2" type="text" class="userId2" disabled="true"></div>
+
 <div class="main">
     <div class="box">
         <div class="box-right">
             <div class="recvfrom">
                 <div class="nav-top">
+                    <p><th:value="${id2}" id="userId2" name="userId2" disabled="true"></p>
                 </div>
-                <div >
-                    <h1 th:each="user:${list}" th:text= ${user}></h1>
-                    <p id="message" class="message"></p>
-                </div>
-
-            </div>
-
-            <div class="sendto">
-
-
-                <div class="but-nav">
-                    <ul>
-                        <li class="font"></li>
-                        <li class="face"></li>
-                        <li class="cut"></li>
-                        <li class="page"></li>
-                        <li class="old"></li>
+                <div class="news-top">
+                    <ul id="myList">
+                        <li class="other" th:each="user:${list}" >
+                            <div class="msg">
+                                <p class="msg-name"; style="color:#F8F8FF">th:value="${id2}" id="userId2" name="userId2" disabled="true"</p>
+                                <h1 th:text= ${user}></h1>
+                            </div>
+                        </li>
                     </ul>
                 </div>
-                <div class="but-text">
-                    <textarea name="contentText" id="contentText" cols="110" rows="6"></textarea>
-                    <div> <button onclick="sendMessage()" class="button">发送信息</button></div>
+            </div>
+            <div class="sendto">
+                <div class="but-nav">
                 </div>
-                <a th:href="@{/peoples(user=${id1})}">返回多人聊天室</a>
+                <div class="but-text">
+                    <textarea class="contentText" id="contentText" cols="110" rows="6"></textarea>
+                    <div> <button onclick="sendMessage()" class="button">发送信息</button></div>
+                    <a th:href="@{/peoples(user=${id1})}">返回多人聊天室</a>
+                </div>
             </div>
         </div>
  

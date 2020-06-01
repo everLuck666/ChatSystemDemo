@@ -41,7 +41,7 @@ public class ChatController {
         }
         map.put("list",listData);
 
-        return "alone.html";
+        return "onechat.html";
     }
 
 

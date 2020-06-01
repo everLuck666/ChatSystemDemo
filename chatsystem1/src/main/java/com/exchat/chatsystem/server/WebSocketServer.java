@@ -95,27 +95,45 @@ public class WebSocketServer {
     public void OnMessage(String message) {
 
         System.out.println("我是来自客户端"+message);
-        if(message.contains("::")){
-            System.out.println("———————————— 来自单人聊天——"+message);
-            String[] usernames = message.split("&");
-            String username = usernames[1];
-            if(-1==aloneList.indexOf(username)){
-                aloneList.add(username);
-                System.out.println("这个用户目前在单独聊天"+username);
+        if(message.contains("我在多人聊天")){
+            String[] messages = message.split("我在多人聊天");
+            if(aloneList.indexOf(messages[0]) != -1){
+                aloneList.remove(messages[0]);
+            }
+
+
+        }
+        if(message.contains("&")){
+            String[] message2= message.split("&");
+
+            //message2[0]是要发送给的用户，message[1]是要发送的信息。
+            if(-1==aloneList.indexOf(message2[1])){
+                aloneList.add(message2[1]);
+                System.out.println("++++++++++"+message2[1]+"进入单人聊天");
             }
 
         }
-        if(message.contains("#")){
+
+        if(message.contains("#")){//单人页面发来的信息
+
             try {
                 String[] message2= message.split("#");
+
                 //message2[0]是要发送给的用户，message[1]是要发送的信息。
+                String[] userName =  message2[1].split(":");//记录在单人聊天的人，不让多人防止多人聊天的人单发送
+                if(-1==aloneList.indexOf(userName[0])){
+                    aloneList.add(userName[0]);
+                    System.out.println("这个用户目前在单独聊天"+userName[0]);
+                }
+
                 System.out.println(message2[0]+message2[1]);
 
                         if(-1==aloneList.indexOf(message2[0])){//目前在单独聊天页里面没有这个用户，那么这个用户在广播区2、还有种可能性是没有登陆
                             sendMessageUser(message2[0],message2[1]+"---来自单独聊天");
-
+                            System.out.println("++++++++发送了单人信息");
                         }else{
                             sendMessageUser(message2[0],message2[1]);
+                            System.out.println("-----------------发送了单人信息");
                         }
 
                 userService = applicationContext.getBean(UserServiceImpl.class);
@@ -134,11 +152,6 @@ public class WebSocketServer {
 
 
 
-                String[] userName =  message2[1].split(":");//记录在单人聊天的人，不让多人防止多人聊天的人单发送
-                if(-1==aloneList.indexOf(userName[0])){
-                    aloneList.add(userName[0]);
-                    System.out.println("这个用户目前在单独聊天"+userName[0]);
-                }
 
 
 
@@ -146,10 +159,7 @@ public class WebSocketServer {
                 e.printStackTrace();
             }
         }else{//群发
-            if(!message.equals("我还活着")){
-                groupSending(message);
-                userService = applicationContext.getBean(UserServiceImpl.class);
-                System.out.println("群发的message"+message);
+            if(!message.equals("我还活着")&&!message.contains("&")&&!message.contains("我在多人聊天")){
                 if(message.contains(":")){
 
                     String[] userName =  message.split(":");
@@ -160,6 +170,10 @@ public class WebSocketServer {
                         aloneList.remove(userName[0]);
                     }
                 }
+                groupSending(message);
+                userService = applicationContext.getBean(UserServiceImpl.class);
+                System.out.println("群发的message"+message);
+
             }
 
 
@@ -225,22 +239,22 @@ public class WebSocketServer {
 
     public void sendMessageUser(String name,String message) throws IOException {
         if(this.session.isOpen()){
-            if(map.get(name) == null){
-                AloneMessage aloneMessage = new AloneMessage();
-                String[] user = message.split(":");
-                //在给单人发消息的时候，由于用户没有登陆，所以这个时候的消息，带个---来自单人登陆
-                String[] message3 = user[1].split("---");
-                if(user.length==2){
-                    aloneMessage.setName2(name);
-                    aloneMessage.setMessage(message3[0]);
-                    aloneMessage.setName(user[0]);
-                    userService = applicationContext.getBean(UserServiceImpl.class);
-                    userService.insertAloneMessage(aloneMessage);//把数据存入到数据库
-                }
-            }else {
+            if(map.get(name) != null){
                 map.get(name).sendMessage(message);
-            }
+                }
 
+
+            AloneMessage aloneMessage = new AloneMessage();
+            String[] user = message.split(":");
+            //在给单人发消息的时候，由于用户没有登陆，所以这个时候的消息，带个---来自单人登陆
+            String[] message3 = user[1].split("---");
+            if(user.length==2) {
+                aloneMessage.setName2(name);
+                aloneMessage.setMessage(message3[0]);
+                aloneMessage.setName(user[0]);
+                userService = applicationContext.getBean(UserServiceImpl.class);
+                userService.insertAloneMessage(aloneMessage);//把数据存入到数据库
+            }
 
         }
 
