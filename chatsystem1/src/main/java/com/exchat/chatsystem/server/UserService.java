@@ -15,7 +15,7 @@ public interface UserService {
 
     int update(User user);
 
-    int getByName(String name);
+    String getByName(String name);
     User getByNameOne(String name);
     List allUser();
     String searchUser(String name);

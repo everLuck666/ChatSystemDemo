@@ -32,10 +32,10 @@ public class LoginControl {
             System.out.println("数据可能粗粗哦1");
             List list = this.userService.allUser();
             map.put("users",list);
-            int  password2 = this.userService.getByName(username);
+            String  password2 = this.userService.getByName(username);
             System.out.println("读出了密码"+password2+"lalal");
-            if(password2 != -1){
-                if(Integer.parseInt(password)==password2){
+            if(password2 != null){
+                if(password.equals(password2)){
                     return "index";
                 }else {
                     map.put("msg", "登陆错误");

@@ -55,16 +55,16 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public int  getByName(String name) {
+    public String  getByName(String name) {
         System.out.println("woshi" + name);
-        int password = -1;
+        String  password = null;
         String sql = "select * from login where name = ?";
 
         String userAccountSql="select name,password from login where name=?";
 
         try{
             Map userAccountMap=(Map)jdbcTemplate.queryForMap(userAccountSql,name);
-            password= Integer.parseInt(userAccountMap.get("password").toString()); //本机不用这种方式也可以，但是服务器不行   //取出数据库中char类型的数据转换为String
+            password= userAccountMap.get("password").toString(); //本机不用这种方式也可以，但是服务器不行   //取出数据库中char类型的数据转换为String
 
         }catch(Exception e){
             System.out.println("用户不存在");

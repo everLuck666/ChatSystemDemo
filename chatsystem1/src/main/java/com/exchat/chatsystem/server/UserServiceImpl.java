@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public int getByName(String name) {
+    public String getByName(String name) {
         return userDao.getByName(name);
     }
 
