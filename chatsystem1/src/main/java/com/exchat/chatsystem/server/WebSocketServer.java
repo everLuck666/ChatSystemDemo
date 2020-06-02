@@ -161,10 +161,13 @@ public class WebSocketServer {
         }else{//群发
             if(!message.equals("我还活着")&&!message.contains("&")&&!message.contains("我在多人聊天")){
                 if(message.contains(":")){
+                    String message1 = message;
 
                     String[] userName =  message.split(":");
                     if(userName.length==2){
-                        userService.insertPeopleChat(message);//防止发送空数据
+                        System.out.println("++++"+message1);
+                        userService = applicationContext.getBean(UserServiceImpl.class);
+                        userService.insertPeopleChat(message1);//防止发送空数据
                     }
                     if(aloneList.indexOf(userName[0]) != -1){
                         aloneList.remove(userName[0]);
