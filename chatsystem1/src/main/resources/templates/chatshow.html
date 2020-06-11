@@ -63,7 +63,57 @@
 			};
 
 
+			
 		}
+		
+		function refresh() {
+
+		var usr = $("#userId").val();
+		var $body = $("#list");
+
+
+			$.ajax({
+				type:'post',
+				url:'/online/getList',
+				data:{user:usr},
+				dataType:'json',
+
+				success:function (data) {
+					var text='';
+					for(i=0;i<data.length;i++){
+						text += '<tr>';
+						text += '<td class= "'+i+'" value="'+data[i].username+'">'+data[i].username+'</td>';
+						text += '<td>'+data[i].state+'</td>';
+						text += '<td><a id = "'+i+'" href="" onclick="fun('+i+')">聊天</a></td>'
+						text += '</tr>';
+					}
+					$body.html(text);
+
+
+
+
+				},
+				error:function () {
+
+
+				}
+
+				}
+
+
+			);
+
+		}
+		setInterval(refresh,1000);
+		function fun(dataN) {
+			var usr = $("#userId").val();
+			var usr2 = $('.'+dataN).text();
+
+			document.getElementById(dataN).href="/chat?id1="+usr+"&id2="+usr2;
+
+		}
+
+
 
 
 	</script>
@@ -150,10 +200,13 @@
 		<div>
 		<div class="name" style="width:150px; float:left; height:100px">
 			<h2>用户列表</h2>
-			<div class="name3" th:each="user:${users}">
-				<h2 th:text= ${user}></h2>
-				<a th:href="@{/chat(id1=${ids},id2=${user})}">聊天</a>
+			<div id = list name=list>
+<!--			<div class="name3" th:each="user:${users}">-->
+<!--				<h2 th:text= ${user}></h2>-->
+<!--				<a th:href="@{/chat(id1=${ids},id2=${user})}">聊天</a>-->
+<!--			</div>-->
 			</div>
+
 
 		</div>
 
@@ -233,5 +286,3 @@
 		})
 	})
 </script>
-
-</html>

@@ -68,4 +68,24 @@ public class UserServiceImpl implements UserService{
     public List aloneMessage(String userName, String userName2) {
         return userDao.aloneMessage(userName,userName2);
     }
+
+    @Override
+    public int insertOnline(String name) {
+        return userDao.insertOnline(name);
+    }
+
+    @Override
+    public List readOnline() {
+        return userDao.readOnline();
+    }
+
+    @Override
+    public int deleteOnline(String name) {
+        return userDao.deleteOnline(name);
+    }
+
+    @Override
+    public int searchOnline(String name) {
+        return userDao.searchOnline(name);
+    }
 }

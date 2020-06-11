@@ -144,4 +144,52 @@ public class UserDaoImpl implements UserDao {
         List list = jdbcTemplate.queryForList(sql,userName,userName2,userName2,userName);
         return list;
     }
+
+    @Override
+    public int insertOnline(String name) {
+        String sql = "insert into online values(?)";
+        return this.jdbcTemplate.update(
+                sql,
+                name
+        );
+
+    }
+
+    @Override
+    public List readOnline() {
+        Map map = null;
+        String name = null;
+        String sql = "select name from online";
+        List list = jdbcTemplate.queryForList(sql);
+        List names = new ArrayList();
+        for(int i = 0;i<list.size();i++){
+            map = (Map) list.get(i);
+            name = map.get("name").toString();
+            names.add(name);
+        }
+        return names;
+    }
+
+    @Override
+    public int deleteOnline(String name) {
+        String sql = "delete from online where name=?";
+        return this.jdbcTemplate.update(
+                sql,
+                name
+        );
+    }
+
+    @Override
+    public int searchOnline(String name) {
+        String sql = "select * from online where name=?";
+        try {
+            Map result = (Map) jdbcTemplate.queryForMap(sql, name);
+            return 1;
+        } catch (Exception e) {
+            System.out.println("online不存在");
+            return -1;
+        }
+
+
+    }
 }

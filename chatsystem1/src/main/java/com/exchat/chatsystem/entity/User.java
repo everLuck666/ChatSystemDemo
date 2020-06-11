@@ -8,6 +8,15 @@ public class User implements Serializable {
     private String username;
 
     private String password;
+    private String state = "离线";
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public Integer getId() {
         return id;

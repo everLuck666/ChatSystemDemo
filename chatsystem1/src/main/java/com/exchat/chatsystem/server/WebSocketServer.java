@@ -63,6 +63,11 @@ public class WebSocketServer {
         this.session = session;
         System.out.println(session);
         this.name = name;
+        userService = applicationContext.getBean(UserServiceImpl.class);
+        if(userService.searchOnline(name) == -1){
+            userService.insertOnline(name);
+        }
+
 
             map.put(name,this);
 
@@ -89,6 +94,10 @@ public class WebSocketServer {
     @OnClose
     public void OnClose() {
         System.out.println("推出");
+        userService = applicationContext.getBean(UserServiceImpl.class);
+            userService.deleteOnline(this.name);
+
+
     }
 
     @OnMessage

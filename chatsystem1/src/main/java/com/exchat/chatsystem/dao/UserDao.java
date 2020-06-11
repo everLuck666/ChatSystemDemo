@@ -22,4 +22,9 @@ public interface UserDao {
 
     List aloneMessage(String userName,String userName2);
 
+    int insertOnline(String name);
+    List readOnline();
+    int deleteOnline(String name);
+    int searchOnline(String name);
+
 }
